@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+for i in $*
+do
+    outfile=${i}.gpg
+    gpg --encrypt --recipient cdddr@protonmail.com --output $outfile $i
+    rm -f $i
+done

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+acme -f /mnt/font/LatinModernMath-Regular/12a/font -F /mnt/font/LMMono12-Regular/12a/font
