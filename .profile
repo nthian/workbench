@@ -26,6 +26,12 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-export BROWSER=firefox
-export EDITOR='emacsclient -t'
-export ALTERNATE_EDITOR='vi'
+if [ -d "$HOME/plan9" ]; then
+  PLAN9=/home/nthian/plan9
+  PATH=$PATH:$PLAN9/bin
+  PAGER=nobs
+  MANPAGER=nobs
+  EDITOR='9 E'
+fi
+
+BROWSER=google-chrome

@@ -46,5 +46,5 @@ fi
 BACKUP_FROM_DIR=${BACKUP_FROM_DIR:-${DEFAULT_FROM_DIR}}
 BACKUP_TO_DIR=${BACKUP_TO_DIR:-${DEFAULT_TO_DIR}}
 if [ -d ${BACKUP_TO_DIR} ]; then
-    rsync -avp ${EXTRA_ARGS} ${BACKUP_FROM_DIR}/ ${BACKUP_TO_DIR}/ 2>&1
+    rsync -avp --exclude ".local/*" ${EXTRA_ARGS} ${BACKUP_FROM_DIR}/ ${BACKUP_TO_DIR}/ 2>&1
 fi

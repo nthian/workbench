@@ -1,2 +1,3 @@
+unalias ls
 alias ll='ls -al'
-alias lf='lc -F'
+alias lf='ls -F'
