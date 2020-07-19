@@ -27,11 +27,8 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 if [ -d "$HOME/plan9" ]; then
-  PLAN9=/home/nthian/plan9
-  PATH=$PATH:$PLAN9/bin
-  PAGER=nobs
-  MANPAGER=nobs
-  EDITOR='9 E'
+	PLAN9=/home/nthian/plan9 export PLAN9
+	PATH=$PATH:$PLAN9/bin export PATH
 fi
 
 BROWSER=google-chrome
