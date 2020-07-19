@@ -116,6 +116,7 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
         source /etc/profile.d/vte.sh
 fi
 
+# plan9port stuff to improve terminal experience.
 if [ -d "$HOME/plan9" ]; then
 	case $termprog in
 		win|9term)
@@ -131,6 +132,13 @@ if [ -d "$HOME/plan9" ]; then
 			unalias ls
 			;;
 	esac
+fi
+
+# emacs stuff to improve term-mode experience.
+if [ "$TERM" = "eterm-color" ]; then
+    cd() {
+	builtin cd $@ && echo -e "\033AnSiTc" $(pwd)
+    }
 fi
 
 PROMPT_COMMAND="history -a; history -n;"
