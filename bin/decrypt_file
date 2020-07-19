@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-for i in $*
-do
-    outfile="$(dirname $i)/$(basename ${i} .gpg)"
-    gpg --decrypt --output $outfile $i
-    rm -f $i
-done
