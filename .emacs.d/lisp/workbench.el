@@ -61,7 +61,8 @@
 (use-package ace-window
   :ensure t
   :bind
-  (("M-'" . ace-window))
+  (("M-'" . ace-window)
+   ("C-x M-'" . ace-window))
   :config
   (progn
     (setq aw-dispatch-always t)
