@@ -18,6 +18,13 @@
     (add-hook 'go-mode-hook (lambda (&rest args)
 			      (setq tab-width 4)))))
 
+(use-package markdown-mode
+  :ensure t
+  :hook (markdown-mode . visual-line-mode))
+
+(use-package magit
+  :ensure t)
+
 ;;; Modes
 (show-paren-mode 1)
 (auto-fill-mode 1)
@@ -57,6 +64,7 @@
   (("M-'" . ace-window))
   :config
   (progn
+    (setq aw-dispatch-always t)
     (set-face-attribute 'aw-leading-char-face nil
 			:weight 'bold)))
 

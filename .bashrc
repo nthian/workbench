@@ -118,27 +118,38 @@ fi
 
 # plan9port stuff to improve terminal experience.
 if [ -d "$HOME/plan9" ]; then
-	case $termprog in
-		win|9term)
-			export PAGER=nobs
-			export MANPAGER=nobs
-			export EDITOR=E
+    case $termprog in
+	win|9term)
+	    export PAGER=nobs
+	    export MANPAGER=nobs
+	    export EDITOR=E
 
-			cd() {
-				builtin cd $@ && awd
-			}
-			awd
+	    cd() {
+		builtin cd $@ && awd
+	    }
+	    awd
 
-			unalias ls
-			;;
-	esac
+	    unalias ls
+	    ;;
+    esac
 fi
 
 # emacs stuff to improve term-mode experience.
 if [ "$TERM" = "eterm-color" ]; then
-    cd() {
-	builtin cd $@ && echo -e "\033AnSiTc" $(pwd)
+    eterm-set-cwd() {
+	$@ && echo -e "\033AnSiTc" $(pwd)
     }
+    eterm-reset() {
+	echo -e "\033AnSiTu" $(whoami)	
+	echo -e "\033AnSiTc" $(pwd)
+	echo -e "\033AnSiTh" $(uname -n)
+    }
+    eterm-reset
+
+    for cmd in cd popd pushd
+    do
+	alias $cmd="eterm-set-cwd $cmd"
+    done
 fi
 
 PROMPT_COMMAND="history -a; history -n;"
