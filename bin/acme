@@ -1,0 +1,35 @@
+#!/bin/sh
+
+export NAMESPACE=${NAMESPACE:-/tmp/ns.${USER}.$(uuidgen)}
+
+# We should only setup/cleanup the NAMESPACE, if it it doesn't
+# already exist.
+if [ ! -d "${NAMESPACE}" ]; then
+	mkdir -p ${NAMESPACE}
+
+	cleanup() {
+		for s in ${NAMESPACE}/*
+		do
+			run fuser -k ${s} 
+		done
+	
+		rm -rf ${NAMESPACE}
+	}
+
+	trap cleanup EXIT
+fi
+
+# Whether we've inherited or created our own namespace,
+# we will want to start up supporting utilities if they
+# are not already present.
+[ ! -S ${NAMESPACE}/plumb ] && plumber &
+[ ! -S ${NAEMSPACE}/font ] && fontsrv &
+
+# Add any commands associated with acme to the front of PATH.
+if [ -d $HOME/cmd/acme ]; then
+	export PATH=$HOME/cmd/acme:$PATH
+fi
+
+font=/mnt/font/GoMono/10a/font
+Font=$font
+$PLAN9/bin/acme -f ${font} -F ${Font} -a

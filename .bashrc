@@ -2,8 +2,6 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-. $HOME/lib/common.sh
-
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -13,7 +11,7 @@ esac
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
-
+HISTIGNORE="ls:cd:pwd:exit:fg:bg:exit"
 # append to the history file, don't overwrite it
 shopt -s histappend
 
@@ -113,3 +111,26 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+        source /etc/profile.d/vte.sh
+fi
+
+if [ -d "$HOME/plan9" ]; then
+	case $termprog in
+		win|9term)
+			export PAGER=nobs
+			export MANPAGER=nobs
+			export EDITOR=E
+
+			cd() {
+				builtin cd $@ && awd
+			}
+			awd
+
+			unalias ls
+			;;
+	esac
+fi
+
+PROMPT_COMMAND="history -a; history -n;"
