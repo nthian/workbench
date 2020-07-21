@@ -1,8 +1,12 @@
 ;; packages
 (add-to-list 'package-archives
 	     '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(package-initialize)
 
 (require 'color)
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
 (use-package paredit
   :ensure t
@@ -68,6 +72,19 @@
     (setq aw-dispatch-always t)
     (set-face-attribute 'aw-leading-char-face nil
 			:weight 'bold)))
+
+;; Use the ssh-agent in /tmp/ssh-*/agent.* if it exists.
+(defun set-ssh-agent ()
+  (interactive)
+  (dolist (file (file-expand-wildcards "/tmp/ssh-*/agent.*"))
+    (let ((file-attrs (file-attributes file))
+	  (pid (string-to-number (file-name-extension file))))
+      (if (and (= (user-uid)
+		  (file-attribute-user-id file-attrs))
+	       (and pid (process-attributes pid)))
+	  (setenv "SSH_AUTH_SOCK" file)))))
+
+(set-ssh-agent)
 
 ;; backups
 (add-to-list 'backup-directory-alist
