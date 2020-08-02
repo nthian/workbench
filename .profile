@@ -25,4 +25,10 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+
+if [ -d "$HOME/plan9" ]; then
+	PLAN9=/home/nthian/plan9 export PLAN9
+	PATH=$PATH:$PLAN9/bin export PATH
+fi
+
 BROWSER=google-chrome
