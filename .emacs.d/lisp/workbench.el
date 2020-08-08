@@ -3,8 +3,6 @@
 	     '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (package-initialize)
 
-(require 'color)
-
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
@@ -24,14 +22,26 @@
 
 (use-package markdown-mode
   :ensure t
-  :hook (markdown-mode . visual-line-mode))
+  :hook (markdown-mode . auto-fill-mode))
 
 (use-package magit
   :ensure t)
 
+(use-package org
+  :ensure t
+  :hook ((org-mode . auto-fill-mode))
+  :config
+  (progn
+    (setq fill-column 80)))
+
+(use-package base16-theme
+  :ensure t
+  :config
+  (progn
+    (load-theme 'base16-default-dark t)))
+
 ;;; Modes
 (show-paren-mode 1)
-(auto-fill-mode 1)
 (column-number-mode 1)
 
 (add-hook 'term-mode-hook
@@ -43,13 +53,17 @@
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 
+(set-default 'fill-column 80)
+
+(setq ring-bell-function 'ignore)
+
 (setq frame-background-mode 'light)
 
 (defun set-font (font)
   (set-default-font font)
   (setq default-frame-alist (assq-delete-all 'font default-frame-alist))
   (add-to-list 'default-frame-alist (cons 'font font)))
-(set-font "IBM Plex Mono-10")
+(set-font "IBM Plex Mono-10:style=Regular")
 
 (set-face-attribute 'mode-line nil
 		    :box nil)
@@ -60,8 +74,6 @@
 (display-time)
 
 ;;; Reducing Friction
-;; Ace Window is a nice little utility for popping around when
-;; multiple buffers are open. 
 (use-package ace-window
   :ensure t
   :bind
@@ -83,13 +95,13 @@
 		  (file-attribute-user-id file-attrs))
 	       (and pid (process-attributes pid)))
 	  (setenv "SSH_AUTH_SOCK" file)))))
-
 (set-ssh-agent)
 
 ;; backups
 (add-to-list 'backup-directory-alist
 	     '("." . "~/.saves/"))
 (setq delete-old-versions t)
+(setq inhibit-startup-message t)
 
 ;; Custom Functions
 (defun kill-and-close (&rest args)
@@ -111,4 +123,5 @@
 			       (revert-buffer t t t)))
 (global-set-key (kbd "M-%") #'query-replace-regexp)
 
+(require 'plumber)
 (provide 'workbench)

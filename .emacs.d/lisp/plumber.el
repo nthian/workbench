@@ -1,8 +1,39 @@
-(defun plumber/expand-selection (&rest args)
+;;; plumber.el --- a framework to take actions based on text patterns.
+
+;; Copyright (C) 2020 Ian Thiele
+
+;; Author: Ian Thiele <icthiele@gmail.com>
+;; Keywords: automation, convenience
+;; Version: 0.0.1
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; This was loosely inspired by the plumbing mechanism in plan9port. It
+;; is a fairly simple implementation, but is hopefully flexible enough
+;; to easily extend.
+
+(defun plumber/expand-selection (point)
+  "Expand the selection out from `point` until a blank, newline, single-,
+or double-quote character is reached. If one of these characters should
+be included in the message to the dispatcher, it should be manually selected
+as a region; a pre-selected region is passed through without modification."
   (interactive "d")
-  (let ((pos (save-excursion  
+  (let ((pos (save-excursion
 	       (if (not mark-active)
-		   (let ((cclass "^[:blank:]=\n\"'"))
+		   (let ((cclass "^[:blank:]\n\"'"))
 		     (skip-chars-backward cclass)
 		     (push-mark)
 		     (skip-chars-forward cclass)))
@@ -12,27 +43,43 @@
       (goto-char pos))))
 
 (defun plumber/expand-selection-mouse (event &rest args)
-  "When called with a mouse"
+  "Sibling function to plumber/expand-selection to wrap mouse functionality.
+Moves the mouse to the point chosen by whichever handler handled the message."
   (interactive "e\np")
   (mouse-set-point event)
   (let* ((pos (plumber/expand-selection (point)))
   	 (coords (window-absolute-pixel-position pos)))
-    (x-set-mouse-absolute-pixel-position (car coords) (cdr coords)))
-  )
+    (x-set-mouse-absolute-pixel-position (car coords) (cdr coords))))
 
-(defun plumber/plumb-region (p1 p2)
+(defun plumber/plumb-region (p1 p2 &optional buffer)
+  "Selects the substring from `buffer` and hands it off to the dispatcher.
+
+If `buffer` is not passed or nil, then the current buffer is assumed."
   (interactive "r")
-  (plumber/dispatch
-   (current-buffer)
-   (expand-file-name default-directory)
-   (buffer-substring-no-properties p1 p2)))
+  (let ((buffer (or buffer (current-buffer))))
+    (plumber/dispatch
+     buffer
+     (expand-file-name default-directory)
+     (buffer-substring-no-properties p1 p2))))
+
+(defvar plumber/dispatchers (vector)
+  "A list of dispatchers that should attempt to handle each message.")
+
+(defun plumber/install-dispatcher (fun &optional pos)
+  (let* ((n (seq-length plumber/dispatchers))
+	 (v (vector fun)))
+    (if pos
+	(setq plumber/dispatchers (vconcat (seq-subseq plumber/dispatchers 0 pos)
+					   v
+					   (seq-subseq plumber/dispatchers pos)))
+      (setq plumber/dispatchers (vconcat plumber/dispatchers v)))))
 
 (defun plumber/dispatch (src wdir data)
-  (plumber/message "plumber/dispatch {\n\tsrc: %s,\n\twdir: %s,\n\tdata: %s\n}\n" src wdir data)
-  (cond
-   ((plumber/file-colon-number src wdir data))
-   ((plumber/file-colon-regexp src wdir data))
-   (t (plumber/search src wdir data))))
+  (plumber/message "plumber/dispatch {\n\tsrc: %s,\n\twdir: %s,\n\tdata: %s\n}\n"
+		   src wdir data)
+  (seq-take-while (lambda (fun)
+			     (null (funcall fun src wdir data)))
+			   plumber/dispatchers))
 
 (defvar plumber/file-path-re "^\\(/?\\(?:[^/]+/\\)*[^/:]+\\)")
 (defvar plumber/colon-line-re "\\(?::\\([[:digit:]]+\\)\\)?")
@@ -59,6 +106,28 @@
 				       (function (lambda ()
 						   (re-search-forward regexp))))
       nil)))
+
+(defun plumber/xdg-open (src widr data)
+  (let* ((re "\\.\\(docx?\\|pdf\\|png\\)$")
+	 (m (string-match re data)))
+    (when m
+      (plumber/message "XDG-OPEN: %s :: %s" default-directory data)
+      (call-process "xdg-open"
+		    nil
+		    nil
+		    nil
+		    data))))
+
+(defun plumber/web-browser (src wdir data)
+  (let* ((re "^\\(https?://[^[:blank:]]+\\)")
+	 (m (string-match re data)))
+    (when m
+      (let ((url (match-string 1 data)))
+	(start-process "plumber/browser"
+		       nil
+		       (or (getenv "BROWSER")
+			   "firefox")
+		       data)))))
 
 (defun plumber/search (src wdir data)
   (let* ((narrow-re "\\([a-zA-Z0-9_/\\$-]+\\)")
@@ -93,5 +162,13 @@
   (let ((inhibit-message t))
     (message (apply #'format fmt args))))
 
+(plumber/install-dispatcher #'plumber/xdg-open)
+(plumber/install-dispatcher #'plumber/file-colon-number)
+(plumber/install-dispatcher #'plumber/file-colon-regexp)
+(plumber/install-dispatcher #'plumber/web-browser)
+(plumber/install-dispatcher #'plumber/search)
+
 (global-set-key (kbd "M-.") #'plumber/expand-selection)
 (global-set-key (kbd "<mouse-3>") #'plumber/expand-selection-mouse)
+
+(provide 'plumber)
