@@ -34,12 +34,6 @@
   (progn
     (setq fill-column 80)))
 
-(use-package base16-theme
-  :ensure t
-  :config
-  (progn
-    (load-theme 'base16-default-dark t)))
-
 ;;; Modes
 (show-paren-mode 1)
 (column-number-mode 1)
@@ -67,6 +61,10 @@
 
 (set-face-attribute 'mode-line nil
 		    :box nil)
+(set-face-attribute 'secondary-selection nil
+		    :background "lightgoldenrod")
+(set-face-attribute 'match nil
+		    :background "lightgoldenrod")
 (global-font-lock-mode 1)
 
 (setq display-time-format "%H:%M")

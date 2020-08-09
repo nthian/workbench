@@ -11,13 +11,18 @@ esac
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
-HISTIGNORE="ls:cd:pwd:exit:fg:bg:exit"
+HISTIGNORE="ls*:cd*:pwd:exit:fg:bg"
 # append to the history file, don't overwrite it
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=1000000
+HISTFILESIZE=2000000
+HISTTIMEFORMAT="%Y-%m-%dT%H:%M:%S  "
+
+function hgrep() {
+    history | grep $@
+}
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -114,24 +119,6 @@ fi
 
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
         source /etc/profile.d/vte.sh
-fi
-
-# plan9port stuff to improve terminal experience.
-if [ -d "$HOME/plan9" ]; then
-    case $termprog in
-	win|9term)
-	    export PAGER=nobs
-	    export MANPAGER=nobs
-	    export EDITOR=E
-
-	    cd() {
-		builtin cd $@ && awd
-	    }
-	    awd
-
-	    unalias ls
-	    ;;
-    esac
 fi
 
 # emacs stuff to improve term-mode experience.
