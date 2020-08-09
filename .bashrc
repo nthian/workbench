@@ -2,6 +2,11 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+if [ -d "$HOME/plan9" ]; then
+	export PLAN9=$HOME/plan9
+	export PATH=$PATH:$PLAN9/bin
+fi
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -21,7 +26,7 @@ HISTFILESIZE=2000000
 HISTTIMEFORMAT="%Y-%m-%dT%H:%M:%S  "
 
 function hgrep() {
-    history | grep $@
+    history | grep "$@"
 }
 
 # check the window size after each command and, if necessary,
@@ -121,22 +126,17 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
         source /etc/profile.d/vte.sh
 fi
 
-# emacs stuff to improve term-mode experience.
-if [ "$TERM" = "eterm-color" ]; then
-    eterm-set-cwd() {
-	$@ && echo -e "\033AnSiTc" $(pwd)
-    }
-    eterm-reset() {
-	echo -e "\033AnSiTu" $(whoami)	
-	echo -e "\033AnSiTc" $(pwd)
-	echo -e "\033AnSiTh" $(uname -n)
-    }
-    eterm-reset
+if [ "$termprog" = "win" ] || [ "$termprog" = "9term" ]; then
+	export PAGER=nobs
+	export MANPAGER=nobs
+	export EDITOR=E
 
-    for cmd in cd popd pushd
-    do
-	alias $cmd="eterm-set-cwd $cmd"
-    done
+	function cd() {
+		builtin cd $@ && awd
+	}
+	awd
+
+	[ "$(type -t ls)" = "alias" ] && unalias ls
 fi
 
 PROMPT_COMMAND="history -a; history -n;"
