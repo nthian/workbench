@@ -1,8 +1,0 @@
-#!/bin/sh
-
-INDENT="\t"
-if [ $# -gt 0 ]; then
-	INDENT="$1"
-fi
-
-sed "s/^${INDENT}//"
