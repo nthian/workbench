@@ -57,7 +57,7 @@
   (set-default-font font)
   (setq default-frame-alist (assq-delete-all 'font default-frame-alist))
   (add-to-list 'default-frame-alist (cons 'font font)))
-(set-font "IBM Plex Mono-10:style=Regular")
+(set-font "IBM Plex Mono-10")
 
 (set-face-attribute 'mode-line nil
 		    :box nil)
@@ -103,7 +103,7 @@
 
 ;; Custom Functions
 (defun kill-and-close (&rest args)
-  (interactive)
+   (interactive)
   (let ((buf (current-buffer))
 	(win (selected-window)))
     (kill-buffer buf)

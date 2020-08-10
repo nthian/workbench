@@ -26,14 +26,15 @@
 ;; to easily extend.
 
 (defun plumber/expand-selection (point)
-  "Expand the selection out from `point` until a blank, newline, single-,
-or double-quote character is reached. If one of these characters should
-be included in the message to the dispatcher, it should be manually selected
-as a region; a pre-selected region is passed through without modification."
+  "Expand the selection out from `point` until a blank, newline,
+quote, or brace character is reached. If one of these characters
+should be included in the message to the dispatcher, it should be
+manually selected as a region; a pre-selected region is passed
+through without modification."
   (interactive "d")
   (let ((pos (save-excursion
 	       (if (not mark-active)
-		   (let ((cclass "^[:blank:]\n\"'"))
+		   (let ((cclass "^[:blank:]\n\"'([{}])"))
 		     (skip-chars-backward cclass)
 		     (push-mark)
 		     (skip-chars-forward cclass)))
@@ -118,6 +119,11 @@ If `buffer` is not passed or nil, then the current buffer is assumed."
 		    nil
 		    data))))
 
+(defun plumber/xref-find-definitions (src wdir data)
+  (condition-case nil
+      (xref-find-definitions data)
+    (error nil)))
+
 (defun plumber/web-browser (src wdir data)
   (let* ((re "^\\(https?://[^[:blank:]]+\\)")
 	 (m (string-match re data)))
@@ -165,6 +171,7 @@ If `buffer` is not passed or nil, then the current buffer is assumed."
 (plumber/install-dispatcher #'plumber/xdg-open)
 (plumber/install-dispatcher #'plumber/file-colon-number)
 (plumber/install-dispatcher #'plumber/file-colon-regexp)
+(plumber/install-dispatcher #'plumber/xref-find-definitions)
 (plumber/install-dispatcher #'plumber/web-browser)
 (plumber/install-dispatcher #'plumber/search)
 
