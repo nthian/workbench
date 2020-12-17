@@ -54,10 +54,10 @@
 (setq frame-background-mode 'light)
 
 (defun set-font (font)
-  (set-default-font font)
+  (set-frame-font font t t)
   (setq default-frame-alist (assq-delete-all 'font default-frame-alist))
   (add-to-list 'default-frame-alist (cons 'font font)))
-(set-font "IBM Plex Mono-10")
+(set-font "IBM Plex Mono-11")
 
 (set-face-attribute 'mode-line nil
 		    :box nil)

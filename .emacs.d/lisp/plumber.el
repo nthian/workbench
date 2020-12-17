@@ -76,11 +76,14 @@ If `buffer` is not passed or nil, then the current buffer is assumed."
       (setq plumber/dispatchers (vconcat plumber/dispatchers v)))))
 
 (defun plumber/dispatch (src wdir data)
-  (plumber/message "plumber/dispatch {\n\tsrc: %s,\n\twdir: %s,\n\tdata: %s\n}\n"
-		   src wdir data)
-  (seq-take-while (lambda (fun)
-			     (null (funcall fun src wdir data)))
-			   plumber/dispatchers))
+  (let ((pos nil))
+    (seq-take-while (lambda (fun)
+		      (let ((rval (funcall fun src wdir data)))
+			(when (number-or-marker-p rval)
+			  (setq pos rval))
+			(null (funcall fun src wdir data))))
+		    plumber/dispatchers)
+    pos))
 
 (defvar plumber/file-path-re "^\\(/?\\(?:[^/]+/\\)*[^/:]+\\)")
 (defvar plumber/colon-line-re "\\(?::\\([[:digit:]]+\\)\\)?")
@@ -112,7 +115,6 @@ If `buffer` is not passed or nil, then the current buffer is assumed."
   (let* ((re "\\.\\(docx?\\|pdf\\|png\\)$")
 	 (m (string-match re data)))
     (when m
-      (plumber/message "XDG-OPEN: %s :: %s" default-directory data)
       (call-process "xdg-open"
 		    nil
 		    nil
@@ -120,8 +122,11 @@ If `buffer` is not passed or nil, then the current buffer is assumed."
 		    data))))
 
 (defun plumber/xref-find-definitions (src wdir data)
-  (condition-case nil
-      (xref-find-definitions data)
+  (condition-case err
+      (progn
+	(xref-find-definitions data)
+	(message "xref: point: %d" (point))
+	(point))
     (error nil)))
 
 (defun plumber/web-browser (src wdir data)
@@ -141,19 +146,18 @@ If `buffer` is not passed or nil, then the current buffer is assumed."
 	 (text (when matches (match-string 1 data)))
 	 (start (min (+ (mark) matches 1) (point-max)))
 	 (width (length text)))
-    (plumber/message "narrow search: %s, start: %d" text start)
     (or
      (save-excursion
        (goto-char start)
        (when (search-forward text nil t)
 	 (- (point) width)))
      (save-excursion
-       (goto-char start)
-       (search-backward text nil t))
+       (goto-char (point-min))
+       (when (search-forward text nil t)
+	 (- (point) width)))
      nil)))
 
 (defun plumber/open-file-with-action (file action)
-  (plumber/message "action: %s" action)
   (find-file-other-window file)
   (funcall action)
   (point))
