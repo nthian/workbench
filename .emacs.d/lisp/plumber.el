@@ -81,7 +81,7 @@ If `buffer` is not passed or nil, then the current buffer is assumed."
 		      (let ((rval (funcall fun src wdir data)))
 			(when (number-or-marker-p rval)
 			  (setq pos rval))
-			(null (funcall fun src wdir data))))
+			(null rval)))
 		    plumber/dispatchers)
     pos))
 

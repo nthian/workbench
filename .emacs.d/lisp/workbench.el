@@ -42,6 +42,13 @@
 	  (lambda ()
 	    (term-set-escape-char ?\C-x)))
 
+;;; slime
+(let ((quicklisp-file (expand-file-name "~/.quicklisp/slime-helper.el")))
+  (if (file-exists-p quicklisp-file)
+      (progn
+	(load quicklisp-file)
+	(setq inferior-lisp-program "sbcl"))))
+
 ;;; Look and feel
 (tool-bar-mode -1)
 (menu-bar-mode -1)
