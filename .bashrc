@@ -2,11 +2,6 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-if [ -d "$HOME/plan9" ]; then
-	export PLAN9=$HOME/plan9
-	export PATH=$PATH:$PLAN9/bin
-fi
-
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -126,17 +121,10 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
         source /etc/profile.d/vte.sh
 fi
 
-if [ "$termprog" = "win" ] || [ "$termprog" = "9term" ]; then
-	export PAGER=nobs
-	export MANPAGER=nobs
-	export EDITOR=E
-
-	function cd() {
-		builtin cd $@ && awd
-	}
-	awd
-
-	[ "$(type -t ls)" = "alias" ] && unalias ls
+if [ -f $HOME/lib/zettelkasten.sh ]; then
+    . $HOME/lib/zettelkasten.sh
 fi
 
+# . $HOME/lib/emacs.sh
+. $HOME/lib/plan9.sh
 PROMPT_COMMAND="history -a; history -n;"

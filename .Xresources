@@ -1,0 +1,16 @@
+Xcursor.size: 16
+
+URxvt.font: xft:Triplicate A Code-11
+URxvt.letterSpace: 0
+URxvt.background: #ffffff
+URxvt.foreground: #000000
+URxvt.color0: #2E3436
+URxvt.color1: #CC0000
+URxvt.color2: #4E9A06
+URxvt.color3: #C4A000
+URxvt.color4: #3465A4
+URxvt.color5: #75507B
+URxvt.color6: #06989A
+URxvt.color7: #D3D7CF
+URxvt.intensityStyles: False
+URxvt.scrollBar: False
