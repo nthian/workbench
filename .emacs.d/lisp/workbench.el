@@ -8,7 +8,7 @@
 
 (use-package paredit
   :ensure t
-  :hook ((lisp-interaction-mode emacs-lisp-mode) . paredit-mode))
+  :hook ((lisp-interaction-mode emacs-lisp-mode lisp-mode) . paredit-mode))
 
 (use-package haskell-mode
   :ensure t)
@@ -43,7 +43,7 @@
 	    (term-set-escape-char ?\C-x)))
 
 ;;; slime
-(let ((quicklisp-file (expand-file-name "~/.quicklisp/slime-helper.el")))
+(let ((quicklisp-file (expand-file-name "~/quicklisp/slime-helper.el")))
   (if (file-exists-p quicklisp-file)
       (progn
 	(load quicklisp-file)
@@ -64,14 +64,15 @@
   (set-frame-font font t t)
   (setq default-frame-alist (assq-delete-all 'font default-frame-alist))
   (add-to-list 'default-frame-alist (cons 'font font)))
-(set-font "IBM Plex Mono-11")
 
+;; (set-font "DejaVu Sans Mono-11")
+(set-font "Triplicate A Code-8")
+(set-face-attribute 'region nil
+		    :background "lightgoldenrod")
 (set-face-attribute 'mode-line nil
 		    :box nil)
 (set-face-attribute 'secondary-selection nil
-		    :background "lightgoldenrod")
-(set-face-attribute 'match nil
-		    :background "lightgoldenrod")
+		    :background "#cccc7c")
 (global-font-lock-mode 1)
 
 (setq display-time-format "%H:%M")
@@ -86,9 +87,11 @@
    ("C-x M-'" . ace-window))
   :config
   (progn
-    (setq aw-dispatch-always t)
+    (setq aw-dispatch-always nil)
     (set-face-attribute 'aw-leading-char-face nil
 			:weight 'bold)))
+
+(setq server-window #'pop-to-buffer)
 
 ;; Use the ssh-agent in /tmp/ssh-*/agent.* if it exists.
 (defun set-ssh-agent ()
@@ -128,5 +131,9 @@
 			       (revert-buffer t t t)))
 (global-set-key (kbd "M-%") #'query-replace-regexp)
 
+(add-to-list 'custom-theme-load-path
+	     (expand-file-name "~/.emacs.d/lisp"))
+
+(require 'glazer)
 (require 'plumber)
 (provide 'workbench)
