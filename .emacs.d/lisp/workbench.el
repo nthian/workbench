@@ -65,8 +65,8 @@
   (setq default-frame-alist (assq-delete-all 'font default-frame-alist))
   (add-to-list 'default-frame-alist (cons 'font font)))
 
-;; (set-font "DejaVu Sans Mono-11")
-(set-font "Triplicate A Code-8")
+;; (set-font "DejaVu Sans Mono-8")
+(set-font "Triplicate A Code-11")
 (set-face-attribute 'region nil
 		    :background "lightgoldenrod")
 (set-face-attribute 'mode-line nil
