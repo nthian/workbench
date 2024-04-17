@@ -58,5 +58,8 @@
 (add-to-list 'default-frame-alist '((font . "Liberation Mono-11")))
 (global-font-lock-mode 1)
 
-
+(fringe-mode -1)
+(setq-default left-margin-width 2)
+(setq-default right-margin-width 2)
+;; (set-window-margins (selected-window) 2 2)
 (provide 'glazer)

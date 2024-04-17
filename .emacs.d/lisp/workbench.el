@@ -140,7 +140,6 @@
 (require 'hal)
 (require 'glazer)
 (require 'plumber)
-(require 'builder)
 (require 'mail-config)
 (require 'rss-config)
 (provide 'workbench)
