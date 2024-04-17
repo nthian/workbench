@@ -1,4 +1,5 @@
 ;; packages
+(require 'package)
 (add-to-list 'package-archives
 	     '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (package-initialize)
@@ -30,9 +31,27 @@
 (use-package org
   :ensure t
   :hook ((org-mode . auto-fill-mode))
+  :bind
+  (("C-c c" . org-capture))
   :config
   (progn
-    (setq fill-column 80)))
+    (setq fill-column 80
+	  org-directory "~/org"
+	  org-agenda-files '("inbox.org"))
+    (setq org-capture-templates
+	  `(("i" "Inbox" entry (file "inbox.org")
+	     ,(concat "* TODO %?\n"
+		      "/Entered on/ %U"))))))
+
+(use-package geiser-guile
+  :ensure t)
+
+;;; Encoding
+(set-default-coding-systems 'utf-8)     ; Default to utf-8 encoding
+(prefer-coding-system       'utf-8)     ; Add utf-8 at the front for automatic detection.
+(set-terminal-coding-system 'utf-8)     ; Set coding system of terminal output
+(set-keyboard-coding-system 'utf-8)     ; Set coding system for keyboard input on TERMINAL
+(set-language-environment "English")    ; Set up multilingual environment
 
 ;;; Modes
 (show-paren-mode 1)
@@ -42,38 +61,14 @@
 	  (lambda ()
 	    (term-set-escape-char ?\C-x)))
 
+(xterm-mouse-mode 1)
+
 ;;; slime
-(let ((quicklisp-file (expand-file-name "~/quicklisp/slime-helper.el")))
+(let ((quicklisp-file (expand-file-name "~/.quicklisp/slime-helper.el")))
   (if (file-exists-p quicklisp-file)
       (progn
 	(load quicklisp-file)
 	(setq inferior-lisp-program "sbcl"))))
-
-;;; Look and feel
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-
-(set-default 'fill-column 80)
-
-(setq ring-bell-function 'ignore)
-
-(setq frame-background-mode 'light)
-
-(defun set-font (font)
-  (set-frame-font font t t)
-  (setq default-frame-alist (assq-delete-all 'font default-frame-alist))
-  (add-to-list 'default-frame-alist (cons 'font font)))
-
-;; (set-font "DejaVu Sans Mono-8")
-(set-font "Triplicate A Code-11")
-(set-face-attribute 'region nil
-		    :background "lightgoldenrod")
-(set-face-attribute 'mode-line nil
-		    :box nil)
-(set-face-attribute 'secondary-selection nil
-		    :background "#cccc7c")
-(global-font-lock-mode 1)
 
 (setq display-time-format "%H:%M")
 (setq display-time-default-load-average nil)
@@ -119,6 +114,13 @@
     (kill-buffer buf)
     (delete-window win)))
 
+(defun snarf (p1 p2)
+  (interactive "r")
+  (save-excursion
+    (if (not mark-active)
+	(display-message-or-buffer "Snarfed whole buffer!"))
+    (kill-ring-save p1 p2 mark-active)))
+
 ;;; Custom Keybindings
 (global-set-key (kbd "C-x C-o") (lambda (&rest args)
 				(interactive)
@@ -129,11 +131,16 @@
 (global-set-key (kbd "<f5>") (lambda (&rest args)
 			       (interactive)
 			       (revert-buffer t t t)))
-(global-set-key (kbd "M-%") #'query-replace-regexp)
+(global-set-key (kbd "M-%") #'replace-regexp)
+(global-set-key (kbd "M-w") #'snarf)
 
 (add-to-list 'custom-theme-load-path
 	     (expand-file-name "~/.emacs.d/lisp"))
 
+(require 'hal)
 (require 'glazer)
 (require 'plumber)
+(require 'builder)
+(require 'mail-config)
+(require 'rss-config)
 (provide 'workbench)

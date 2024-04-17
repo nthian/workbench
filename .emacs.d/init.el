@@ -9,26 +9,15 @@
 	     t)
 
 (require 'workbench)
-
-(let ((slime-file (expand-file-name "~/quicklisp/slime-helper.el")))
-  (and (file-exists-p slime-file)
-       (load (expand-file-name slime-file))))
-;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "sbcl")
-
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(custom-safe-themes
-   '("a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" default))
+   '("a0fa9c4582d3c50f6afdcbed2ea759d1e2e17caa3bccb62dbccc090be1129582" "b30ab3b30e70f4350dad6bfe27366d573ace2190cc405c619bd5e602110c6e0c" "217d2ec28f9ea0bf81f0d278557c84defc9e9c232002fa7ea0dd1426b35e286b" "4fe1b8318b32e2444eb8e3515041b1fc4249ae0718ebe098658430d29446d0a6" "0d02484ffe37515d22a0c0a3709eb8a153114d69dff0b594f574637558d4fb7e" "d19b94d54f496bfca31bb9e3db039ce89fa363f1bdd42e160e8482ed9232c280" "1d3e46a0c17b53065822932227d26acd88c47c831f922079527565f4d3c9cff7" default))
  '(package-selected-packages
-   '(geiser gruvbox-theme base16-theme base16-themes acme-theme commentary-theme cyberpunk-theme doom-themes eink-theme subatomic-theme edit-indirect magit markdown-mode ace-window go-mode haskell-mode paredit use-package))
- '(pdf-view-midnight-colors '("#fdf4c1" . "#1d2021")))
+   '(org-modern nordic-night-theme colorless-themes elfeed use-package slime paredit markdown-mode magit haskell-mode go-mode geiser ace-window)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
