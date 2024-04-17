@@ -6,10 +6,10 @@
 
 (defun glazer/light-theme ()
   (set-face-attribute 'default nil
-		      :foreground "black"
-		      :background "white")
+		      :foreground "#000000"
+		      :background "#FFFFFF")
   (set-face-attribute 'region nil
-		      :background "light goldenrod")
+		      :background "#EEDD82")
   (set-face-attribute 'highlight nil
 		      :background "#F5DEb3")
   (set-face-attribute 'mode-line nil
